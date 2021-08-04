@@ -165,16 +165,16 @@ static void howPrefsShouldBeDone() {
 	if(letsGo) {
 
 
-    	self.hotGoodLookingDialerImageView = [[UIImageView alloc] initWithFrame:self.bounds];
-    	self.hotGoodLookingDialerImageView.tag = 120;
+		self.hotGoodLookingDialerImageView = [[UIImageView alloc] initWithFrame:self.bounds];
+		self.hotGoodLookingDialerImageView.tag = 120;
 		self.hotGoodLookingDialerImageView.image = [GcImagePickerUtils imageFromDefaults:@"me.luki.marieprefs" withKey:@"dialerImage"];
 		self.hotGoodLookingDialerImageView.contentMode = UIViewContentModeScaleAspectFill;
-    	self.hotGoodLookingDialerImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		self.hotGoodLookingDialerImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-    	[self insertSubview:self.hotGoodLookingDialerImageView atIndex:0];
+		[self insertSubview:self.hotGoodLookingDialerImageView atIndex:0];
 
 
-    }
+	}
 
 
 }
@@ -232,9 +232,9 @@ static void howPrefsShouldBeDone() {
 	}
 
 
-
 	if(!shouldLoad) return;
 
 	%init(Marie);
+
 
 }
