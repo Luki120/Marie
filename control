@@ -1,0 +1,9 @@
+Package: me.luki.marie
+Name: Marie
+Version: 0.9.0
+Architecture: iphoneos-arm
+Description: A goddamn neat awesome mobile substrate tweak or whatever
+Maintainer: Luki
+Author: Luki
+Section: Tweaks
+Depends: mobilesubstrate, preferenceloader, com.mrgcgamer.libgcuniversal
