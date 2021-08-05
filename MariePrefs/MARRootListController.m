@@ -28,15 +28,11 @@ static void postNSNotification() {
 		NSArray *chosenIDs = @[@"GroupCell1", @"DialerImage", @"PasscodeImage", @"ShareSheetImage"];
 		self.savedSpecifiers = (self.savedSpecifiers) ?: [[NSMutableDictionary alloc] init];
 		
-		for(PSSpecifier *specifier in _specifiers) {
+		for(PSSpecifier *specifier in _specifiers)
             
-			if([chosenIDs containsObject:[specifier propertyForKey:@"id"]]) {
+			if([chosenIDs containsObject:[specifier propertyForKey:@"id"]])
             
 				[self.savedSpecifiers setObject:specifier forKey:[specifier propertyForKey:@"id"]];
-			
-			}
-
-		}
 	
 	}
 
@@ -51,12 +47,12 @@ static void postNSNotification() {
 	[super reloadSpecifiers];
 
 
-	if (![[self readPreferenceValue:[self specifierForID:@"EnableSwitch"]] boolValue])
+	if(![[self readPreferenceValue:[self specifierForID:@"EnableSwitch"]] boolValue])
 
 		[self removeContiguousSpecifiers:@[self.savedSpecifiers[@"GroupCell1"], self.savedSpecifiers[@"DialerImage"], self.savedSpecifiers[@"PasscodeImage"], self.savedSpecifiers[@"ShareSheetImage"]] animated:NO];
 
 
-	else if (![self containsSpecifier:self.savedSpecifiers[@"GroupCell1"]])
+	else if(![self containsSpecifier:self.savedSpecifiers[@"GroupCell1"]])
 
 		[self insertContiguousSpecifiers:@[self.savedSpecifiers[@"GroupCell1"], self.savedSpecifiers[@"DialerImage"], self.savedSpecifiers[@"PasscodeImage"], self.savedSpecifiers[@"ShareSheetImage"]] afterSpecifierID:@"EnableSwitch" animated:NO];
 
@@ -69,7 +65,7 @@ static void postNSNotification() {
 	[super viewDidLoad];
 	[self reloadSpecifiers];
 
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/passcodeImageChanged"), NULL, 0);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/passcodeImageChanged"), NULL, 0);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/shareSheetImageChanged"), NULL, 0);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/dialerImageChanged"), NULL, 0);
 
@@ -92,7 +88,7 @@ static void postNSNotification() {
 	[settings setObject:value forKey:specifier.properties[@"key"]];
 	[settings writeToFile:prefsKeys atomically:YES];
 
-    [NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
 	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"shareSheetImageApplied" object:nil];
 	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"dialerImageApplied" object:nil];
 
@@ -102,12 +98,12 @@ static void postNSNotification() {
 	if([key isEqualToString:@"letsGo"]) {
 
 	
-	if (![[self readPreferenceValue:[self specifierForID:@"EnableSwitch"]] boolValue])
+	if(![[self readPreferenceValue:[self specifierForID:@"EnableSwitch"]] boolValue])
 
 		[self removeContiguousSpecifiers:@[self.savedSpecifiers[@"GroupCell1"], self.savedSpecifiers[@"DialerImage"], self.savedSpecifiers[@"PasscodeImage"], self.savedSpecifiers[@"ShareSheetImage"]] animated:YES];
 
 
-	else if (![self containsSpecifier:self.savedSpecifiers[@"GroupCell1"]])
+	else if(![self containsSpecifier:self.savedSpecifiers[@"GroupCell1"]])
 
 		[self insertContiguousSpecifiers:@[self.savedSpecifiers[@"GroupCell1"], self.savedSpecifiers[@"DialerImage"], self.savedSpecifiers[@"PasscodeImage"], self.savedSpecifiers[@"ShareSheetImage"]] afterSpecifierID:@"EnableSwitch" animated:YES];
 
