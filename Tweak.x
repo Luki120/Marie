@@ -57,7 +57,7 @@ static void howPrefsShouldBeDone() {
 %new
 
 
-- (void)setPasscodeImage {
+- (void)setPasscodeImage { // self explanatory
 
 
 	howPrefsShouldBeDone();
@@ -80,7 +80,7 @@ static void howPrefsShouldBeDone() {
 }
 
 
-- (void)viewDidLoad {
+- (void)viewDidLoad { // create a notification observer
 
 
 	%orig;
@@ -107,7 +107,7 @@ static void howPrefsShouldBeDone() {
 %new
 
 
-- (void)setShareSheetImage {
+- (void)setShareSheetImage { // self explanatory
 
 
 	howPrefsShouldBeDone();
@@ -129,7 +129,7 @@ static void howPrefsShouldBeDone() {
 }
 
 
-- (void)viewDidLoad {
+- (void)viewDidLoad { // create a notification observer
 
 
 	%orig;
@@ -155,7 +155,7 @@ static void howPrefsShouldBeDone() {
 %new
 
 
-- (void)setDialerImage {
+- (void)setDialerImage { // self explanatory
 
 
 	howPrefsShouldBeDone();
@@ -180,7 +180,7 @@ static void howPrefsShouldBeDone() {
 }
 
 
-- (void)didMoveToSuperview {
+- (void)didMoveToSuperview { // create a notification observer
 
 
 	%orig;
