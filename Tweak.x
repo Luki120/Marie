@@ -87,6 +87,7 @@ static void howPrefsShouldBeDone() {
 
 	[self setPasscodeImage];
 
+	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setPasscodeImage) name:@"passcodeImageApplied" object:nil];
 
 
@@ -136,6 +137,7 @@ static void howPrefsShouldBeDone() {
 
 	[self setShareSheetImage];
 
+	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setShareSheetImage) name:@"shareSheetImageApplied" object:nil];
 
 
@@ -187,6 +189,7 @@ static void howPrefsShouldBeDone() {
 
 	[self setDialerImage];
 
+	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setDialerImage) name:@"dialerImageApplied" object:nil];	
 
 
