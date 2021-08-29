@@ -20,9 +20,9 @@
 				<key>defaults</key>
 				<string>me.luki.marieprefs</string>
 				<key>action</key>
-				<string>discord</string>
+				<string>github</string>
 				<key>label</key>
-				<string>Chat With Us On Discord</string>
+				<string>Source Code &#x1f525;</string>
 			</dict>
 			<dict>
 				<key>cell</key>
@@ -48,9 +48,9 @@
 				<key>defaults</key>
 				<string>me.luki.marieprefs</string>
 				<key>action</key>
-				<string>github</string>
+				<string>discord</string>
 				<key>label</key>
-				<string>Source Code &#x1f525;</string>
+				<string>Chat With Us On Discord</string>
 			</dict>
 			<dict>
 				<key>cell</key>
