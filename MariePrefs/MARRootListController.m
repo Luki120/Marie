@@ -112,6 +112,72 @@ static void postNSNotification() {
 }
 
 
+- (void)shatterThePrefsToPieces {
+
+
+	AudioServicesPlaySystemSound(1521);
+
+	UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"Marie"
+	message:@"Do you wish to bring these images to the ground, punch them, destroy them and build some new ones upon a fresh respring?"
+	preferredStyle:UIAlertControllerStyleAlert];
+
+	UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Heck yeah" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+
+		NSFileManager *fileManager = [NSFileManager defaultManager];
+
+		BOOL success = [fileManager removeItemAtPath:@"var/mobile/Library/Preferences/me.luki.marieprefs.plist" error:nil];
+		BOOL successTwo = [fileManager removeItemAtPath:@"var/mobile/Library/Preferences/me.luki.marieprefs" error:nil];
+		
+		if((success) || (successTwo)) [self blurEffect];
+
+	}];
+
+	UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:nil];
+
+	[resetAlert addAction:confirmAction];
+	[resetAlert addAction:cancelAction];
+
+	[self presentViewController:resetAlert animated:YES completion:nil];
+
+
+}
+
+
+- (void)blurEffect {
+
+	_UIBackdropViewSettings *settings = [_UIBackdropViewSettings settingsForStyle:2];
+
+	_UIBackdropView *backdropView = [[_UIBackdropView alloc] initWithSettings:settings];
+	backdropView.layer.masksToBounds = YES;
+	backdropView.clipsToBounds = YES;
+	backdropView.alpha = 0;
+	backdropView.frame = self.view.bounds;
+	[self.view addSubview:backdropView];
+
+	[UIView animateWithDuration:1.0 delay:0.0 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+
+		[backdropView setAlpha:1.0];
+
+	} completion:^(BOOL finished) {
+
+		[self resetPrefs];
+
+	}];
+
+}
+
+
+- (void)resetPrefs {
+
+
+	pid_t pid;
+	const char* args[] = {"sbreload", NULL, NULL, NULL};
+	posix_spawn(&pid, "/usr/bin/sbreload", NULL, NULL, (char* const*)args, NULL);
+
+
+}
+
+
 @end
 
 
@@ -172,7 +238,7 @@ static void postNSNotification() {
 - (void)github {
 
 
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://github.com/Luki120/Aria"] options:@{} completionHandler:nil];
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://github.com/Luki120/Marie"] options:@{} completionHandler:nil];
 
 
 }
