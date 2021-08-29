@@ -33,7 +33,7 @@ static NSString *prefsKeys = @"/var/mobile/Library/Preferences/me.luki.mariepref
 static BOOL letsGo;
 
 
-static void howPrefsShouldBeDone() {
+static void loadShit() {
 
 
 	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:prefsKeys];
@@ -60,7 +60,7 @@ static void howPrefsShouldBeDone() {
 - (void)setPasscodeImage { // self explanatory
 
 
-	howPrefsShouldBeDone();
+	loadShit();
 
 	if(letsGo) {
 
@@ -111,7 +111,7 @@ static void howPrefsShouldBeDone() {
 - (void)setShareSheetImage { // self explanatory
 
 
-	howPrefsShouldBeDone();
+	loadShit();
 
 	if(letsGo) {
 
@@ -160,7 +160,7 @@ static void howPrefsShouldBeDone() {
 - (void)setDialerImage { // self explanatory
 
 
-	howPrefsShouldBeDone();
+	loadShit();
 
 	[[self viewWithTag:120] removeFromSuperview];
 
@@ -204,7 +204,7 @@ static void howPrefsShouldBeDone() {
 %ctor {
 
 
-	howPrefsShouldBeDone();
+	loadShit();
 
 	NSString *processName = [NSProcessInfo processInfo].processName;
 	BOOL isSpringboard = [@"SpringBoard" isEqualToString:processName];
