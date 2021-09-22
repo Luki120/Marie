@@ -1,11 +1,12 @@
 Package: me.luki.marie
 Name: Marie
-Version: 1.0.1
+Version: 1.0.2
 Architecture: iphoneos-arm
 Description: A goddamn neat awesome mobile substrate tweak or whatever
 Maintainer: Luki
 Author: Luki
 Section: Tweaks
 Depends: mobilesubstrate, preferenceloader, com.mrgcgamer.libgcuniversal
+Icon: https://raw.githubusercontent.com/Luki120/luki120.github.io/master/assets/Marie/MarieIcon.png
 Depiction: https://luki120.github.io/depictions/web/?p=me.luki.marie
 SileoDepiction: https://luki120.github.io/depictions/native/me.luki.marie/depiction.json
