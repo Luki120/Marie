@@ -14,7 +14,7 @@
 - (id)initWithSettings:(id)arg1;
 @property (assign, nonatomic) BOOL blurRadiusSetOnce;
 @property (assign, nonatomic) double _blurRadius;
-@property (nonatomic, copy) NSString * _blurQuality;
+@property (copy, nonatomic) NSString * _blurQuality;
 @end
 
 
@@ -22,8 +22,15 @@
 @end
 
 
-@interface MARRootListController : PSListController
-@property (nonatomic, retain) NSMutableDictionary *savedSpecifiers;
+@interface MARRootListController : PSListController {
+
+	UITableView *_table;
+
+}
+@property (nonatomic, strong) NSMutableDictionary *savedSpecifiers;
+@property (nonatomic, strong) UIView *headerView;
+@property (nonatomic, strong) UIImageView *iconView;
+@property (nonatomic, strong) UIImageView *headerImageView;
 @end
 
 

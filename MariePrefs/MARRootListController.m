@@ -3,7 +3,7 @@
 
 static NSString *prefsKeys = @"/var/mobile/Library/Preferences/me.luki.marieprefs.plist";
 
-#define tint [UIColor colorWithRed: 1.00 green: 0.89 blue: 0.76 alpha: 1.00]
+#define tint [UIColor colorWithRed: 0.95 green: 0.46 blue: 0.60 alpha: 1.00]
 
 
 static void postNSNotification() {
@@ -40,6 +40,83 @@ static void postNSNotification() {
 
 }
 
+
+- (instancetype)init {
+
+
+	self = [super init];
+
+
+	if(self) {
+
+
+		UIImage *banner = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/MarieBanner.png"];
+
+		self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0,0,UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.width * banner.size.height / banner.size.width)];
+		self.headerImageView = [UIImageView new];
+		self.headerImageView.image = banner;
+		self.headerImageView.contentMode = UIViewContentModeScaleAspectFill;
+		self.headerImageView.translatesAutoresizingMaskIntoConstraints = NO;
+		[self.headerView addSubview:self.headerImageView];
+
+		self.navigationItem.titleView = [UIView new];
+		self.iconView = [UIImageView new];
+		self.iconView.alpha = 1;
+		self.iconView.image = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/Marie@2x.png"];
+		self.iconView.contentMode = UIViewContentModeScaleAspectFit;
+		self.iconView.translatesAutoresizingMaskIntoConstraints = NO;
+		[self.navigationItem.titleView addSubview:self.iconView];
+
+
+		UILabel *versionLabel = [UILabel new];
+		versionLabel.text = @"Marie 1.0.2";
+		versionLabel.font = [UIFont boldSystemFontOfSize:12];
+		versionLabel.textAlignment = NSTextAlignmentCenter;
+		versionLabel.translatesAutoresizingMaskIntoConstraints = NO;
+		[self.navigationItem.titleView addSubview:versionLabel];
+
+		[NSLayoutConstraint activateConstraints:@[
+
+			[self.headerImageView.topAnchor constraintEqualToAnchor:self.headerView.topAnchor],
+			[self.headerImageView.leadingAnchor constraintEqualToAnchor:self.headerView.leadingAnchor],
+			[self.headerImageView.trailingAnchor constraintEqualToAnchor:self.headerView.trailingAnchor],
+			[self.headerImageView.bottomAnchor constraintEqualToAnchor:self.headerView.bottomAnchor],
+			[self.iconView.topAnchor constraintEqualToAnchor:self.navigationItem.titleView.topAnchor constant : -12],
+			[self.iconView.leadingAnchor constraintEqualToAnchor:self.navigationItem.titleView.leadingAnchor],
+			[self.iconView.trailingAnchor constraintEqualToAnchor:self.navigationItem.titleView.trailingAnchor],
+			[self.iconView.bottomAnchor constraintEqualToAnchor:self.navigationItem.titleView.bottomAnchor],
+			[versionLabel.topAnchor constraintEqualToAnchor:self.iconView.bottomAnchor],
+			[versionLabel.leadingAnchor constraintEqualToAnchor:self.navigationItem.titleView.leadingAnchor],
+			[versionLabel.trailingAnchor constraintEqualToAnchor:self.navigationItem.titleView.trailingAnchor],
+
+		]];
+
+		_table.tableHeaderView = self.headerView;
+
+	}
+
+	return self;
+
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+	tableView.tableHeaderView = self.headerView;
+	return [super tableView:tableView cellForRowAtIndexPath:indexPath];
+
+}
+
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+
+	CGFloat offsetY = scrollView.contentOffset.y;
+
+	if (offsetY > 0) offsetY = 0;
+
+	self.headerImageView.frame = CGRectMake(0, offsetY, self.headerView.frame.size.width, 200 - offsetY);
+
+}
 
 
 - (void)reloadSpecifiers {
@@ -117,11 +194,11 @@ static void postNSNotification() {
 
 	AudioServicesPlaySystemSound(1521);
 
-	UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"Marie"
+	UIAlertController *resetAlert = [UIAlertController alertControllerWithTitle:@"Marie"
 	message:@"Do you wish to bring these images to the ground, punch them, destroy them and build some new ones upon a fresh respring?"
 	preferredStyle:UIAlertControllerStyleAlert];
 
-	UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Heck yeah" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+	UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Heck yeah" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
 
 		NSFileManager *fileManager = [NSFileManager defaultManager];
 
@@ -132,7 +209,7 @@ static void postNSNotification() {
 
 	}];
 
-	UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:nil];
+	UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:nil];
 
 	[resetAlert addAction:confirmAction];
 	[resetAlert addAction:cancelAction];
@@ -244,19 +321,10 @@ static void postNSNotification() {
 }
 
 
-- (void)arizona {
-
-
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://repo.twickd.com/get/com.twickd.luki120.arizona"] options:@{} completionHandler:nil];
-
-
-}
-
-
 - (void)elixir {
 
 
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://luki120.github.io/"] options:@{} completionHandler:nil];
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://luki120.github.io/depictions/web/?p=me.luki.marie"] options:@{} completionHandler:nil];
 
 
 }
