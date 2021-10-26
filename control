@@ -1,8 +1,8 @@
 Package: me.luki.marie
 Name: Marie
-Version: 1.0.2
+Version: 1.0.3
 Architecture: iphoneos-arm
-Description: A goddamn neat awesome mobile substrate tweak or whatever
+Description: Put an image for the dialer, passcode or sharesheet background on the fly
 Maintainer: Luki
 Author: Luki
 Section: Tweaks
