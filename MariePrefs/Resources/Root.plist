@@ -18,7 +18,7 @@
 				<key>secondAccount</key>
 				<string>BenOwl3</string>
 				<key>secondURL</key>
-				<string>https://pbs.twimg.com/profile_images/1388934413103161345/et7cnoR1_400x400.jpg</string>
+				<string>https://avatars.githubusercontent.com/u/91443760?v=4</string>
 			</dict>
 			<dict>
 				<key>cell</key>
@@ -32,7 +32,7 @@
 				<key>defaults</key>
 				<string>me.luki.marieprefs</string>
 				<key>key</key>
-				<string>letsGo</string>
+				<string>yes</string>
 				<key>label</key>
 				<string>Enable</string>
 				<key>id</key>
@@ -41,6 +41,8 @@
 			<dict>
 				<key>cell</key>
 				<string>PSGroupCell</string>
+				<key>label</key>
+				<string>Dark Mode</string>
 				<key>id</key>
 				<string>GroupCell1</string>
 			</dict>
@@ -58,7 +60,7 @@
 				<key>id</key>
 				<string>DialerImage</string>
 				<key>key</key>
-				<string>dialerImage</string>
+				<string>dialerDarkImage</string>
 				<key>usesPhotos</key>
 				<true />
 				<key>usesVideos</key>
@@ -80,7 +82,7 @@
 				<key>id</key>
 				<string>PasscodeImage</string>
 				<key>key</key>
-				<string>passcodeBgImage</string>
+				<string>passcodeBgDarkImage</string>
 				<key>usesPhotos</key>
 				<true />
 				<key>usesVideos</key>
@@ -102,7 +104,81 @@
 				<key>id</key>
 				<string>ShareSheetImage</string>
 				<key>key</key>
-				<string>shareSheetImage</string>
+				<string>shareSheetDarkImage</string>
+				<key>usesPhotos</key>
+				<true />
+				<key>usesVideos</key>
+				<false />
+				<key>videoQuality</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSGroupCell</string>
+				<key>label</key>
+				<string>Light Mode</string>
+				<key>id</key>
+				<string>GroupCell2</string>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSLinkCell</string>
+				<key>cellClass</key>
+				<string>GcImagePickerCell</string>
+				<key>label</key>
+				<string>Epic Dialer Image</string>
+				<key>defaults</key>
+				<string>me.luki.marieprefs</string>
+				<key>PostNotification</key>
+				<string>me.luki.marieprefs/dialerImageChanged</string>
+				<key>id</key>
+				<string>DialerLightImage</string>
+				<key>key</key>
+				<string>dialerLightImage</string>
+				<key>usesPhotos</key>
+				<true />
+				<key>usesVideos</key>
+				<false />
+				<key>videoQuality</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSLinkCell</string>
+				<key>cellClass</key>
+				<string>GcImagePickerCell</string>
+				<key>label</key>
+				<string>Neat Passcode Image</string>
+				<key>defaults</key>
+				<string>me.luki.marieprefs</string>
+				<key>PostNotification</key>
+				<string>me.luki.marieprefs/passcodeImageChanged</string>
+				<key>id</key>
+				<string>PasscodeLightImage</string>
+				<key>key</key>
+				<string>passcodeBgLightImage</string>
+				<key>usesPhotos</key>
+				<true />
+				<key>usesVideos</key>
+				<false />
+				<key>videoQuality</key>
+				<integer>1</integer>
+			</dict>
+			<dict>
+				<key>cell</key>
+				<string>PSLinkCell</string>
+				<key>cellClass</key>
+				<string>GcImagePickerCell</string>
+				<key>label</key>
+				<string>Fancy ShareSheet Image</string>
+				<key>defaults</key>
+				<string>me.luki.marieprefs</string>
+				<key>PostNotification</key>
+				<string>me.luki.marieprefs/shareSheetImageChanged</string>
+				<key>id</key>
+				<string>ShareSheetLightImage</string>
+				<key>key</key>
+				<string>shareSheetLightImage</string>
 				<key>usesPhotos</key>
 				<true />
 				<key>usesVideos</key>
@@ -115,16 +191,14 @@
 				<string>PSGroupCell</string>
 			</dict>
 			<dict>
+				<key>action</key>
+				<string>shatterThePrefsToPieces</string>
 				<key>cell</key>
-				<string>PSLinkCell</string>
+				<string>PSButtonCell</string>
 				<key>cellClass</key>
 				<string>MarieTableCell</string>
-				<key>detail</key>
-				<string>MarieLinksRootListController</string>
-				<key>isController</key>
-				<true />
 				<key>label</key>
-				<string>Take A Look</string>
+				<string>Delete Images</string>
 			</dict>
 			<dict>
 				<key>cell</key>
@@ -147,14 +221,16 @@
 				<string>PSGroupCell</string>
 			</dict>
 			<dict>
-				<key>action</key>
-				<string>shatterThePrefsToPieces</string>
 				<key>cell</key>
-				<string>PSButtonCell</string>
+				<string>PSLinkCell</string>
 				<key>cellClass</key>
 				<string>MarieTableCell</string>
+				<key>detail</key>
+				<string>MarieLinksRootListController</string>
+				<key>isController</key>
+				<true />
 				<key>label</key>
-				<string>Delete Images</string>
+				<string>Take A Look</string>
 			</dict>
 			<dict>
 				<key>cell</key>
