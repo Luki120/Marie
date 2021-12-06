@@ -1,6 +1,6 @@
 BUNDLE_NAME = MariePrefs
 
-MariePrefs_FILES = MARRootListController.m
+MariePrefs_FILES = MarieVC.m
 MariePrefs_CFLAGS = -fobjc-arc
 MariePrefs_LIBRARIES = gcuniversal
 MariePrefs_FRAMEWORKS = UIKit

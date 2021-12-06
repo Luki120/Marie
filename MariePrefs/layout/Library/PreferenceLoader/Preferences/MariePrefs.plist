@@ -9,7 +9,7 @@
 			<key>cell</key>
 			<string>PSLinkCell</string>
 			<key>detail</key>
-			<string>MARRootListController</string>
+			<string>MarieVC</string>
 			<key>icon</key>
 			<string>Assets/Marie.png</string>
 			<key>isController</key>
