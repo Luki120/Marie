@@ -1,15 +1,6 @@
 #import "MarieVC.h"
 
 
-static void postNSNotification() {
-
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"dialerImageApplied" object:nil];
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"shareSheetImageApplied" object:nil];
-
-}
-
-
 @implementation MarieVC {
 
 	UITableView *_table;
@@ -125,13 +116,13 @@ static void postNSNotification() {
 	[navBarStackView addArrangedSubview:iconView];
 
 	versionLabel = [UILabel new];
-	versionLabel.text = @"Marie 1.0.3";
+	versionLabel.text = @"Marie 1.0.4";
 	versionLabel.font = [UIFont boldSystemFontOfSize:12];
 	versionLabel.textAlignment = NSTextAlignmentCenter;
 	[navBarStackView addArrangedSubview:versionLabel];
 
 	UIButton *changelogButton =  [UIButton buttonWithType:UIButtonTypeCustom];
-	changelogButton.tintColor = MarieTintColor;
+	changelogButton.tintColor = kMarieTintColor;
 	[changelogButton setImage : changelogButtonImage forState:UIControlStateNormal];
 	[changelogButton addTarget : self action:@selector(showWtfChangedInThisVersion) forControlEvents:UIControlEventTouchUpInside];
 
@@ -142,6 +133,7 @@ static void postNSNotification() {
 	headerImageView = [UIImageView new];
 	headerImageView.image = bannerImage;
 	headerImageView.contentMode = UIViewContentModeScaleAspectFill;
+	headerImageView.clipsToBounds = YES;
 	headerImageView.translatesAutoresizingMaskIntoConstraints = NO;
 	[headerView addSubview:headerImageView];
 
@@ -177,9 +169,10 @@ static void postNSNotification() {
 	UIImage *tweakIconImage = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/MarieIcon.png"];
 	UIImage *checkmarkImage = [UIImage systemImageNamed:@"checkmark.circle.fill"];
 
-	changelogController = [[OBWelcomeController alloc] initWithTitle:@"Marie" detailText:@"1.0.3" icon:tweakIconImage];
+	changelogController = [[OBWelcomeController alloc] initWithTitle:@"Marie" detailText:@"1.0.4" icon: tweakIconImage];
 
-	[changelogController addBulletedListItemWithTitle:@"Tweak" description:@"Added light mode images." image:checkmarkImage];
+	[changelogController addBulletedListItemWithTitle:@"Code" description:@"Prefs code refactoring." image: checkmarkImage];
+	[changelogController addBulletedListItemWithTitle:@"Tweak" description:@"Fixed banner & passcode image not clipping to bounds." image: checkmarkImage];
 
 	_UIBackdropViewSettings *settings = [_UIBackdropViewSettings settingsForStyle:2];
 
@@ -194,7 +187,7 @@ static void postNSNotification() {
 	[backdropView.leadingAnchor constraintEqualToAnchor : changelogController.viewIfLoaded.leadingAnchor].active = YES;
 	[backdropView.trailingAnchor constraintEqualToAnchor : changelogController.viewIfLoaded.trailingAnchor].active = YES;
 
-	changelogController.view.tintColor = MarieTintColor;
+	changelogController.view.tintColor = kMarieTintColor;
 	changelogController.viewIfLoaded.backgroundColor = UIColor.clearColor;
 	changelogController.modalInPresentation = NO;
 	changelogController.modalPresentationStyle = UIModalPresentationPageSheet;
@@ -209,18 +202,18 @@ static void postNSNotification() {
 
 	UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Marie" message:@"Do you wish to bring these images to the ground, punch them, destroy them and build some new ones upon a fresh respring?" preferredStyle:UIAlertControllerStyleAlert];
 
-	UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Heck yeah" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+	UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Heck yeah" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
-		NSFileManager *fileManager = [NSFileManager defaultManager];
+		NSFileManager *fileM = [NSFileManager defaultManager];
 
-		BOOL success = [fileManager removeItemAtPath:@"var/mobile/Library/Preferences/me.luki.marieprefs.plist" error:nil];
-		BOOL successTwo = [fileManager removeItemAtPath:@"var/mobile/Library/Preferences/me.luki.marieprefs" error:nil];
-		
-		if((success) || (successTwo)) [self crossDissolveBlur];
+		[fileM removeItemAtPath:kPath error:nil];
+		[fileM removeItemAtPath:kImagesPath error:nil];
+
+		[self crossDissolveBlur];
 
 	}];
 
-	UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleCancel handler:nil];
+	UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleDefault handler:nil];
 
 	[alertController addAction:confirmAction];
 	[alertController addAction:cancelAction];
@@ -245,11 +238,7 @@ static void postNSNotification() {
 
 		backdropView.alpha = 1;
 
-	} completion:^(BOOL finished) {
-
-		[self launchRespring];
-
-	}];
+	} completion:^(BOOL finished) { [self launchRespring]; }];
 
 }
 
@@ -266,7 +255,7 @@ static void postNSNotification() {
 - (id)readPreferenceValue:(PSSpecifier *)specifier {
 
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
-	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:prefsKeys]];
+	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:kPath]];
 	return (settings[specifier.properties[@"key"]]) ?: specifier.properties[@"default"];
 
 }
@@ -275,9 +264,9 @@ static void postNSNotification() {
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
  
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
-	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:prefsKeys]];
+	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:kPath]];
 	[settings setObject:value forKey:specifier.properties[@"key"]];
-	[settings writeToFile:prefsKeys atomically:YES];
+	[settings writeToFile:kPath atomically:YES];
 
 	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"dialerImageApplied" object:nil];
 	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
@@ -296,6 +285,15 @@ static void postNSNotification() {
 		[self insertContiguousSpecifiers:@[savedSpecifiers[@"GroupCell1"], savedSpecifiers[@"DialerImage"], savedSpecifiers[@"PasscodeImage"], savedSpecifiers[@"ShareSheetImage"], savedSpecifiers[@"GroupCell2"], savedSpecifiers[@"DialerLightImage"], savedSpecifiers[@"PasscodeLightImage"], savedSpecifiers[@"ShareSheetLightImage"]] afterSpecifierID:@"EnableSwitch" animated:YES];
 
 	}
+
+}
+
+
+static void postNSNotification() {
+
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"dialerImageApplied" object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"shareSheetImageApplied" object:nil];
 
 }
 
@@ -378,14 +376,14 @@ static void postNSNotification() {
 @end
 
 
-@implementation MarieTableCell
+@implementation MarieTintCell
 
 
 - (void)setTitle:(NSString *)t {
 
 	[super setTitle:t];
 
-	self.titleLabel.textColor = MarieTintColor;
+	self.titleLabel.textColor = kMarieTintColor;
 
 }
 

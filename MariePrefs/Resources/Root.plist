@@ -196,7 +196,7 @@
 				<key>cell</key>
 				<string>PSButtonCell</string>
 				<key>cellClass</key>
-				<string>MarieTableCell</string>
+				<string>MarieTintCell</string>
 				<key>label</key>
 				<string>Delete Images</string>
 			</dict>
@@ -208,7 +208,7 @@
 				<key>cell</key>
 				<string>PSLinkCell</string>
 				<key>cellClass</key>
-				<string>MarieTableCell</string>
+				<string>MarieTintCell</string>
 				<key>detail</key>
 				<string>MarieContributorsVC</string>
 				<key>isController</key>
@@ -224,7 +224,7 @@
 				<key>cell</key>
 				<string>PSLinkCell</string>
 				<key>cellClass</key>
-				<string>MarieTableCell</string>
+				<string>MarieTintCell</string>
 				<key>detail</key>
 				<string>MarieLinksVC</string>
 				<key>isController</key>
