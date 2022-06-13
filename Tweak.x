@@ -37,6 +37,21 @@ static void loadShit() {
 }
 
 
+// Reusable
+
+static UIImageView *createImageViewWithImage(UIImage *image) {
+
+	UIImageView *imageView = [UIImageView new];
+	imageView.image = image;
+	imageView.contentMode = UIViewContentModeScaleAspectFill;
+	imageView.clipsToBounds = YES;
+	imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+	return imageView;
+
+}
+
+
 %group Marie 
 
 
@@ -55,13 +70,13 @@ static void loadShit() {
 	if(!yes) return;
 
 	dialerDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerDarkImage"];
-	dialerLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerLightImage"];
+	dialerLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerLightImage"];	
 
-	self.dialerImageView = [[UIImageView alloc] initWithFrame:self.bounds];
+	UIImage *image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
+
+	self.dialerImageView = createImageViewWithImage(image);
 	self.dialerImageView.tag = 120;
-	self.dialerImageView.image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
-	self.dialerImageView.contentMode = UIViewContentModeScaleAspectFill;
-	self.dialerImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	self.dialerImageView.frame = self.bounds;
 	[self insertSubview:self.dialerImageView atIndex:0];
 
 }
@@ -70,7 +85,6 @@ static void loadShit() {
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection { // handle transition between light/dark mode dynamically
 
 	%orig;
-
 	self.dialerImageView.image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
 
 }
@@ -79,7 +93,6 @@ static void loadShit() {
 - (void)didMoveToSuperview { // create a notification observer
 
 	%orig;
-
 	[self setDialerImage];
 
 	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
@@ -108,12 +121,11 @@ static void loadShit() {
 
 	self.view.alpha = 0;
 
-	self.passcodeImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+	UIImage *image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
+
+	self.passcodeImageView = createImageViewWithImage(image);
 	self.passcodeImageView.alpha = 0;
-	self.passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
-	self.passcodeImageView.contentMode = UIViewContentModeScaleAspectFill;
-	self.passcodeImageView.clipsToBounds = YES;
-	self.passcodeImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	self.passcodeImageView.frame = self.view.bounds;
 	[self.view insertSubview:self.passcodeImageView atIndex:1];
 
 }
@@ -122,7 +134,6 @@ static void loadShit() {
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection { // handle transition between light/dark mode dynamically
 
 	%orig;
-
 	self.passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
 
 }
@@ -157,7 +168,6 @@ static void loadShit() {
 - (void)viewDidLoad { // create a notification observer
 
 	%orig;
-
 	[self setPasscodeImage];
 
 	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
@@ -184,10 +194,10 @@ static void loadShit() {
 	shareSheetDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"shareSheetDarkImage"];
 	shareSheetLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"shareSheetLightImage"];
 
-	self.shareSheetImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-	self.shareSheetImageView.image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
-	self.shareSheetImageView.contentMode = UIViewContentModeScaleAspectFill;
-	self.shareSheetImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	UIImage *image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
+
+	self.shareSheetImageView = createImageViewWithImage(image);
+	self.shareSheetImageView.frame = self.view.bounds;
 	[self.view insertSubview:self.shareSheetImageView atIndex:1];
 
 }
@@ -196,7 +206,6 @@ static void loadShit() {
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection { // handle transition between light/dark mode dynamically
 
 	%orig;
-
 	self.shareSheetImageView.image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
 
 }
@@ -205,7 +214,6 @@ static void loadShit() {
 - (void)viewDidLoad { // create a notification observer
 
 	%orig;
-
 	[self setShareSheetImage];
 
 	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
@@ -221,18 +229,18 @@ static void loadShit() {
 %ctor {
 
 	NSString *processName = [NSProcessInfo processInfo].processName;
-	BOOL isSpringboard = [@"SpringBoard" isEqualToString:processName];
+	BOOL isSpringboard = [@"SpringBoard" isEqualToString: processName];
 
-	bool shouldLoad = NO;
+	BOOL shouldLoad = NO;
 	NSArray *args = [[NSClassFromString(@"NSProcessInfo") processInfo] arguments];
 	NSUInteger count = args.count;
-	
+
 	if(count != 0) {
-		
+
 		NSString *executablePath = args[0];
-        
+
 		if(executablePath) {
-            
+
 			NSString *processName = [executablePath lastPathComponent];
 			BOOL isApplication = [executablePath rangeOfString:@"/Application/"].location != NSNotFound || [executablePath rangeOfString:@"/Applications/"].location != NSNotFound;
 			BOOL isFileProvider = [[processName lowercaseString] rangeOfString:@"fileprovider"].location != NSNotFound;
@@ -241,11 +249,11 @@ static void loadShit() {
 						|| [processName isEqualToString:@"InCallService"]
 						|| [processName isEqualToString:@"MessagesNotificationViewService"]
 						|| [executablePath rangeOfString:@".appex/"].location != NSNotFound;
-            
+
 		if((!isFileProvider && isApplication && !skip) || isSpringboard) shouldLoad = YES;
-        
+
 		}
-	
+
 	}
 
 	if(!shouldLoad) return;
