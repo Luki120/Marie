@@ -3,7 +3,6 @@
 
 @implementation MarieVC {
 
-	UITableView *_table;
 	UIImageView *iconView;
 	UILabel *versionLabel;
 	UIStackView *navBarStackView;
@@ -19,32 +18,27 @@
 
 - (NSArray *)specifiers {
 
-	if(!_specifiers) {
+	if(_specifiers) return nil;
+	_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
 
-		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
+	NSArray *chosenIDs = @[
+		@"GroupCell1",
+		@"DialerImage",
+		@"PasscodeImage",
+		@"ShareSheetImage",
+		@"GroupCell2", 
+		@"DialerLightImage", 
+		@"PasscodeLightImage",
+		@"ShareSheetLightImage"
+	];
 
-		NSArray *chosenIDs = @[
+	savedSpecifiers = savedSpecifiers ?: [NSMutableDictionary new];
 
-			@"GroupCell1",
-			@"DialerImage",
-			@"PasscodeImage",
-			@"ShareSheetImage",
-			@"GroupCell2", 
-			@"DialerLightImage", 
-			@"PasscodeLightImage",
-			@"ShareSheetLightImage"
+	for(PSSpecifier *specifier in _specifiers)
 
-		];
+		if([chosenIDs containsObject:[specifier propertyForKey:@"id"]])
 
-		savedSpecifiers = (savedSpecifiers) ?: [NSMutableDictionary new];
-
-		for(PSSpecifier *specifier in _specifiers)
-
-			if([chosenIDs containsObject:[specifier propertyForKey:@"id"]])
-
-				[savedSpecifiers setObject:specifier forKey:[specifier propertyForKey:@"id"]];
-
-	}
+			[savedSpecifiers setObject:specifier forKey:[specifier propertyForKey:@"id"]];
 
 	return _specifiers;
 
@@ -54,16 +48,13 @@
 - (id)init {
 
 	self = [super init];
+	if(!self) return nil;
 
-	if(self) {
+	[self setupUI];
 
-		[self setupUI];
-
-		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/dialerImageChanged"), NULL, 0);
-		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/passcodeImageChanged"), NULL, 0);
-		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/shareSheetImageChanged"), NULL, 0);
-
-	}
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/dialerImageChanged"), NULL, 0);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/passcodeImageChanged"), NULL, 0);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)postNSNotification, CFSTR("me.luki.marieprefs/shareSheetImageChanged"), NULL, 0);
 
 	return self;
 
@@ -107,26 +98,26 @@
 	navBarStackView.alignment = UIStackViewAlignmentCenter;
 	navBarStackView.distribution = UIStackViewDistributionFill;
 	navBarStackView.translatesAutoresizingMaskIntoConstraints = NO;
-	[self.navigationItem.titleView addSubview:navBarStackView];
+	[self.navigationItem.titleView addSubview: navBarStackView];
 
 	iconView = [UIImageView new];
 	iconView.image = iconImage;
 	iconView.contentMode = UIViewContentModeScaleAspectFit;
 	iconView.translatesAutoresizingMaskIntoConstraints = NO;
-	[navBarStackView addArrangedSubview:iconView];
+	[navBarStackView addArrangedSubview: iconView];
 
 	versionLabel = [UILabel new];
 	versionLabel.text = @"Marie 1.0.4";
 	versionLabel.font = [UIFont boldSystemFontOfSize:12];
 	versionLabel.textAlignment = NSTextAlignmentCenter;
-	[navBarStackView addArrangedSubview:versionLabel];
+	[navBarStackView addArrangedSubview: versionLabel];
 
-	UIButton *changelogButton =  [UIButton buttonWithType:UIButtonTypeCustom];
+	UIButton *changelogButton =  [UIButton new];
 	changelogButton.tintColor = kMarieTintColor;
-	[changelogButton setImage : changelogButtonImage forState:UIControlStateNormal];
-	[changelogButton addTarget : self action:@selector(showWtfChangedInThisVersion) forControlEvents:UIControlEventTouchUpInside];
+	[changelogButton setImage:changelogButtonImage forState: UIControlStateNormal];
+	[changelogButton addTarget:self action:@selector(showWtfChangedInThisVersion) forControlEvents: UIControlEventTouchUpInside];
 
-	UIBarButtonItem *changelogButtonItem = [[UIBarButtonItem alloc] initWithCustomView:changelogButton];
+	UIBarButtonItem *changelogButtonItem = [[UIBarButtonItem alloc] initWithCustomView: changelogButton];
 	self.navigationItem.rightBarButtonItem = changelogButtonItem;
 
 	headerView = [[UIView alloc] initWithFrame:CGRectMake(0,0,200,200)];
@@ -135,9 +126,7 @@
 	headerImageView.contentMode = UIViewContentModeScaleAspectFill;
 	headerImageView.clipsToBounds = YES;
 	headerImageView.translatesAutoresizingMaskIntoConstraints = NO;
-	[headerView addSubview:headerImageView];
-
-	_table.tableHeaderView = headerView;
+	[headerView addSubview: headerImageView];
 
 	[self layoutUI];
 
@@ -146,18 +135,18 @@
 
 - (void)layoutUI {
 
-	[iconView.widthAnchor constraintEqualToConstant : 30].active = YES;
-	[iconView.heightAnchor constraintEqualToConstant : 30].active = YES;
+	[iconView.widthAnchor constraintEqualToConstant: 30].active = YES;
+	[iconView.heightAnchor constraintEqualToConstant: 30].active = YES;
 
-	[navBarStackView.topAnchor constraintEqualToAnchor : self.navigationItem.titleView.topAnchor constant : -0.5].active = YES;
-	[navBarStackView.bottomAnchor constraintEqualToAnchor : self.navigationItem.titleView.bottomAnchor].active = YES;
-	[navBarStackView.leadingAnchor constraintEqualToAnchor : self.navigationItem.titleView.leadingAnchor].active = YES;
-	[navBarStackView.trailingAnchor constraintEqualToAnchor : self.navigationItem.titleView.trailingAnchor].active = YES;
+	[navBarStackView.topAnchor constraintEqualToAnchor: self.navigationItem.titleView.topAnchor constant: -0.5].active = YES;
+	[navBarStackView.bottomAnchor constraintEqualToAnchor: self.navigationItem.titleView.bottomAnchor].active = YES;
+	[navBarStackView.leadingAnchor constraintEqualToAnchor: self.navigationItem.titleView.leadingAnchor].active = YES;
+	[navBarStackView.trailingAnchor constraintEqualToAnchor: self.navigationItem.titleView.trailingAnchor].active = YES;
 
-	[headerImageView.topAnchor constraintEqualToAnchor : headerView.topAnchor].active = YES;
-	[headerImageView.bottomAnchor constraintEqualToAnchor : headerView.bottomAnchor].active = YES;
-	[headerImageView.leadingAnchor constraintEqualToAnchor : headerView.leadingAnchor].active = YES;
-	[headerImageView.trailingAnchor constraintEqualToAnchor : headerView.trailingAnchor].active = YES;	
+	[headerImageView.topAnchor constraintEqualToAnchor: headerView.topAnchor].active = YES;
+	[headerImageView.bottomAnchor constraintEqualToAnchor: headerView.bottomAnchor].active = YES;
+	[headerImageView.leadingAnchor constraintEqualToAnchor: headerView.leadingAnchor].active = YES;
+	[headerImageView.trailingAnchor constraintEqualToAnchor: headerView.trailingAnchor].active = YES;	
 
 }
 
@@ -170,7 +159,6 @@
 	UIImage *checkmarkImage = [UIImage systemImageNamed:@"checkmark.circle.fill"];
 
 	changelogController = [[OBWelcomeController alloc] initWithTitle:@"Marie" detailText:@"1.0.4" icon: tweakIconImage];
-
 	[changelogController addBulletedListItemWithTitle:@"Code" description:@"Prefs code refactoring." image: checkmarkImage];
 	[changelogController addBulletedListItemWithTitle:@"Tweak" description:@"Fixed banner & passcode image not clipping to bounds." image: checkmarkImage];
 
@@ -182,10 +170,10 @@
 	backdropView.translatesAutoresizingMaskIntoConstraints = NO;
 	[changelogController.viewIfLoaded insertSubview:backdropView atIndex:0];
 
-	[backdropView.topAnchor constraintEqualToAnchor : changelogController.viewIfLoaded.topAnchor].active = YES;
-	[backdropView.bottomAnchor constraintEqualToAnchor : changelogController.viewIfLoaded.bottomAnchor].active = YES;
-	[backdropView.leadingAnchor constraintEqualToAnchor : changelogController.viewIfLoaded.leadingAnchor].active = YES;
-	[backdropView.trailingAnchor constraintEqualToAnchor : changelogController.viewIfLoaded.trailingAnchor].active = YES;
+	[backdropView.topAnchor constraintEqualToAnchor: changelogController.viewIfLoaded.topAnchor].active = YES;
+	[backdropView.bottomAnchor constraintEqualToAnchor: changelogController.viewIfLoaded.bottomAnchor].active = YES;
+	[backdropView.leadingAnchor constraintEqualToAnchor: changelogController.viewIfLoaded.leadingAnchor].active = YES;
+	[backdropView.trailingAnchor constraintEqualToAnchor: changelogController.viewIfLoaded.trailingAnchor].active = YES;
 
 	changelogController.view.tintColor = kMarieTintColor;
 	changelogController.viewIfLoaded.backgroundColor = UIColor.clearColor;
@@ -200,8 +188,7 @@
 
 	AudioServicesPlaySystemSound(1521);
 
-	UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Marie" message:@"Do you wish to bring these images to the ground, punch them, destroy them and build some new ones upon a fresh respring?" preferredStyle:UIAlertControllerStyleAlert];
-
+	UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Marie" message:@"Do you wish to bring these images to the ground, punch them, destroy them and build some new ones upon a fresh respring?" preferredStyle: UIAlertControllerStyleAlert];
 	UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"Heck yeah" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
 
 		NSFileManager *fileM = [NSFileManager defaultManager];
@@ -215,8 +202,8 @@
 
 	UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Later" style:UIAlertActionStyleDefault handler:nil];
 
-	[alertController addAction:confirmAction];
-	[alertController addAction:cancelAction];
+	[alertController addAction: confirmAction];
+	[alertController addAction: cancelAction];
 
 	[self presentViewController:alertController animated:YES completion:nil];
 
@@ -232,7 +219,7 @@
 	backdropView.frame = self.view.bounds;
 	backdropView.clipsToBounds = YES;
 	backdropView.layer.masksToBounds = YES;
-	[self.view addSubview:backdropView];
+	[self.view addSubview: backdropView];
 
 	[UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
 
@@ -255,16 +242,16 @@
 - (id)readPreferenceValue:(PSSpecifier *)specifier {
 
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
-	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:kPath]];
+	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile: kPath]];
 	return (settings[specifier.properties[@"key"]]) ?: specifier.properties[@"default"];
 
 }
 
 
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
- 
+
 	NSMutableDictionary *settings = [NSMutableDictionary dictionary];
-	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile:kPath]];
+	[settings addEntriesFromDictionary:[NSDictionary dictionaryWithContentsOfFile: kPath]];
 	[settings setObject:value forKey:specifier.properties[@"key"]];
 	[settings writeToFile:kPath atomically:YES];
 
@@ -272,10 +259,12 @@
 	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
 	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"shareSheetImageApplied" object:nil];
 
+	[super setPreferenceValue:value specifier:specifier];
+
 	NSString *key = [specifier propertyForKey:@"key"];
 
 	if([key isEqualToString:@"yes"]) {
-	
+
 	if(![[self readPreferenceValue:[self specifierForID:@"EnableSwitch"]] boolValue])
 
 		[self removeContiguousSpecifiers:@[savedSpecifiers[@"GroupCell1"], savedSpecifiers[@"DialerImage"], savedSpecifiers[@"PasscodeImage"], savedSpecifiers[@"ShareSheetImage"], savedSpecifiers[@"GroupCell2"], savedSpecifiers[@"DialerLightImage"], savedSpecifiers[@"PasscodeLightImage"], savedSpecifiers[@"ShareSheetLightImage"]] animated:YES];
@@ -307,21 +296,17 @@ static void postNSNotification() {
 
 }
 
-
 @end
 
 
 @implementation MarieContributorsVC
 
-
 - (NSArray *)specifiers {
 
 	if(!_specifiers) _specifiers = [self loadSpecifiersFromPlistName:@"MarieContributors" target:self];
-
 	return _specifiers;
 
 }
-
 
 @end
 
@@ -332,7 +317,6 @@ static void postNSNotification() {
 - (NSArray *)specifiers {
 
 	if(!_specifiers) _specifiers = [self loadSpecifiersFromPlistName:@"MarieLinks" target:self];
-
 	return _specifiers;
 
 }
@@ -378,14 +362,11 @@ static void postNSNotification() {
 
 @implementation MarieTintCell
 
-
 - (void)setTitle:(NSString *)t {
 
 	[super setTitle:t];
-
 	self.titleLabel.textColor = kMarieTintColor;
 
 }
-
 
 @end

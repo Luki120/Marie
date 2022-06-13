@@ -7,14 +7,13 @@
 
 
 @interface OBWelcomeController : UIViewController
-@property (assign, nonatomic) BOOL _shouldInlineButtontray;
 - (id)initWithTitle:(id)arg1 detailText:(id)arg2 icon:(id)arg3;
 - (void)addBulletedListItemWithTitle:(id)arg1 description:(id)arg2 image:(id)arg3;
 @end
 
 
 @interface _UIBackdropViewSettings : NSObject
-+ (id)settingsForStyle:(long long)arg1;
++ (id)settingsForStyle:(NSInteger)arg1;
 @end
 
 

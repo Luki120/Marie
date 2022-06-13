@@ -8,7 +8,7 @@ Marie_FILES = Tweak.x
 Marie_CFLAGS = -fobjc-arc
 Marie_LIBRARIES = gcuniversal
 
-SUBPROJECTS += MariePrefs
+SUBPROJECTS = MariePrefs
 
 include $(THEOS)/makefiles/common.mk
 include $(THEOS_MAKE_PATH)/tweak.mk
