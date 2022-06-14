@@ -28,6 +28,10 @@ static UIImage *passcodeLightImage;
 static UIImage *shareSheetDarkImage;
 static UIImage *shareSheetLightImage;
 
+static PHHandsetDialerView *phHandsetDialerView = nil;
+static CSPasscodeViewController *csPasscodeVC = nil;
+static UIActivityContentViewController *uiActivityVC = nil;
+
 static void loadShit() {
 
 	NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: kPath];
@@ -52,7 +56,7 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 }
 
 
-%group Marie 
+%group Marie
 
 
 %hook PHHandsetDialerView
@@ -69,6 +73,8 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 	if(!yes) return;
 
+	phHandsetDialerView = self;
+
 	dialerDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerDarkImage"];
 	dialerLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerLightImage"];	
 
@@ -78,14 +84,6 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	self.dialerImageView.tag = 120;
 	self.dialerImageView.frame = self.bounds;
 	[self insertSubview:self.dialerImageView atIndex:0];
-
-}
-
-
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection { // handle transition between light/dark mode dynamically
-
-	%orig;
-	self.dialerImageView.image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
 
 }
 
@@ -116,6 +114,8 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 	if(!yes) return;
 
+	csPasscodeVC = self;
+
 	passcodeDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"passcodeBgDarkImage"];
 	passcodeLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"passcodeBgLightImage"];
 
@@ -127,14 +127,6 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	self.passcodeImageView.alpha = 0;
 	self.passcodeImageView.frame = self.view.bounds;
 	[self.view insertSubview:self.passcodeImageView atIndex:1];
-
-}
-
-
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection { // handle transition between light/dark mode dynamically
-
-	%orig;
-	self.passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
 
 }
 
@@ -191,6 +183,8 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 	if(!yes) return;
 
+	uiActivityVC = self;
+
 	shareSheetDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"shareSheetDarkImage"];
 	shareSheetLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"shareSheetLightImage"];
 
@@ -203,14 +197,6 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 }
 
 
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection { // handle transition between light/dark mode dynamically
-
-	%orig;
-	self.shareSheetImageView.image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
-
-}
-
-
 - (void)viewDidLoad { // create a notification observer
 
 	%orig;
@@ -218,6 +204,22 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setShareSheetImage) name:@"shareSheetImageApplied" object:nil];
+
+}
+
+
+%end
+
+
+%hook UIScreen
+
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+
+	%orig;
+	phHandsetDialerView.dialerImageView.image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
+	csPasscodeVC.passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
+	uiActivityVC.shareSheetImageView.image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
 
 }
 
