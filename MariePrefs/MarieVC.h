@@ -1,9 +1,9 @@
-#import "../Constants.h"
+@import AudioToolbox.AudioServices;
+@import Preferences.PSSpecifier;
+@import Preferences.PSTableCell;
+@import Preferences.PSListController;
 #import <spawn.h>
-#import <Preferences/PSSpecifier.h>
-#import <Preferences/PSTableCell.h>
-#import <AudioToolbox/AudioServices.h>
-#import <Preferences/PSListController.h>
+#import "../Headers/Common.h"
 
 
 @interface OBWelcomeController : UIViewController

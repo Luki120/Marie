@@ -1,6 +1,12 @@
 #import "MarieVC.h"
 
 
+// ! Constants
+
+static NSString *const kImagesPath = @"/var/mobile/Library/Preferences/me.luki.marieprefs/";
+
+#define kMarieTintColor [UIColor colorWithRed:0.95 green:0.46 blue:0.60 alpha:1.0]
+
 @implementation MarieVC {
 
 	UIImageView *iconView;
