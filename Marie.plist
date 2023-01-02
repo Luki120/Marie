@@ -1,1 +1,10 @@
-{ Filter = { Bundles = ( "com.apple.UIKit" ); }; }
+{
+	Filter = {
+		Classes = (
+			"DialerController",
+			"CSPasscodeViewController",
+			"UIActivityContentViewController",
+			"UIScreen"
+		);
+	};
+}
