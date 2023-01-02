@@ -1,25 +1,7 @@
-#import "Constants.h"
+#import "Headers/Marie.h"
 
 
-@interface CSPasscodeViewController : UIViewController
-@property (nonatomic, strong) UIImageView *passcodeImageView;
-- (void)setPasscodeImage;
-@end
-
-
-@interface UIActivityContentViewController : UIViewController
-@property (nonatomic, strong) UIImageView *shareSheetImageView;
-- (void)setShareSheetImage;
-@end
-
-
-@interface PHHandsetDialerView : UIView
-@property (nonatomic, strong) UIImageView *dialerImageView;
-- (void)setDialerImage;
-@end
-
-
-static BOOL yes;
+#define kUserInterfaceStyle UIScreen.mainScreen.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark
 
 static UIImage *dialerDarkImage;
 static UIImage *dialerLightImage;
@@ -28,9 +10,13 @@ static UIImage *passcodeLightImage;
 static UIImage *shareSheetDarkImage;
 static UIImage *shareSheetLightImage;
 
-static PHHandsetDialerView *phHandsetDialerView = nil;
-static CSPasscodeViewController *csPasscodeVC = nil;
-static UIActivityContentViewController *uiActivityVC = nil;
+static UIImageView *dialerImageView;
+static UIImageView *passcodeImageView;
+static UIImageView *shareSheetImageView;
+
+static NSString *const kDefaults = @"me.luki.marieprefs";
+
+static BOOL yes;
 
 static void loadShit() {
 
@@ -56,12 +42,7 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 }
 
 
-%group Marie
-
-
-%hook PHHandsetDialerView
-
-%property (nonatomic, strong) UIImageView *dialerImageView;
+%hook DialerController
 
 %new
 
@@ -69,42 +50,34 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 	loadShit();
 
-	[[self viewWithTag: 120] removeFromSuperview];
+	[[self.dialerView viewWithTag: 120] removeFromSuperview];
 
 	if(!yes) return;
 
-	phHandsetDialerView = self;
-
 	dialerDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerDarkImage"];
-	dialerLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerLightImage"];	
+	dialerLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"dialerLightImage"];
 
-	UIImage *image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
-
-	self.dialerImageView = createImageViewWithImage(image);
-	self.dialerImageView.tag = 120;
-	self.dialerImageView.frame = self.bounds;
-	[self insertSubview:self.dialerImageView atIndex:0];
+	dialerImageView = createImageViewWithImage(kUserInterfaceStyle ? dialerDarkImage : dialerLightImage);
+	dialerImageView.tag = 120;
+	dialerImageView.frame = self.view.bounds;
+	[self.dialerView insertSubview:dialerImageView atIndex:0];
 
 }
 
 
-- (void)didMoveToSuperview { // create a notification observer
+- (void)viewDidLoad { // create a notification observer
 
 	%orig;
-	[self setDialerImage];
 
-	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
+	[self setDialerImage];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setDialerImage) name:@"dialerImageApplied" object:nil];	
 
 }
-
 
 %end
 
 
 %hook CSPasscodeViewController
-
-%property (nonatomic, strong) UIImageView *passcodeImageView;
 
 %new
 
@@ -113,20 +86,35 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	loadShit();
 
 	if(!yes) return;
-
-	csPasscodeVC = self;
+	if(passcodeImageView) [passcodeImageView removeFromSuperview];
 
 	passcodeDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"passcodeBgDarkImage"];
 	passcodeLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"passcodeBgLightImage"];
 
 	self.view.alpha = 0;
 
-	UIImage *image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
+	passcodeImageView = createImageViewWithImage(kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage);
+	passcodeImageView.alpha = 0;
+	passcodeImageView.frame = self.view.bounds;
+	[self.view insertSubview:passcodeImageView atIndex:1];
 
-	self.passcodeImageView = createImageViewWithImage(image);
-	self.passcodeImageView.alpha = 0;
-	self.passcodeImageView.frame = self.view.bounds;
-	[self.view insertSubview:self.passcodeImageView atIndex:1];
+}
+
+%new
+
+- (void)updatePasscodeImage {
+
+	passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
+
+}
+
+
+- (void)viewDidLoad { // create a notification observer
+
+	%orig;
+
+	[self setPasscodeImage];
+	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updatePasscodeImage) name:@"passcodeImageApplied" object:nil];
 
 }
 
@@ -137,7 +125,7 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 	[UIView transitionWithView:self.view duration:0.8 options:UIViewAnimationOptionCurveEaseInOut animations:^{
 
-		self.passcodeImageView.alpha = 1;
+		passcodeImageView.alpha = 1;
 
 	} completion:nil];
 
@@ -147,33 +135,14 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 - (void)viewWillDisappear:(BOOL)animated {
 
 	%orig;
-
-	[UIView transitionWithView:self.view duration:0.8 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-
-		self.passcodeImageView.alpha = 0;
-
-	} completion:nil];
+	passcodeImageView.alpha = 0;
 
 }
-
-
-- (void)viewDidLoad { // create a notification observer
-
-	%orig;
-	[self setPasscodeImage];
-
-	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
-	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setPasscodeImage) name:@"passcodeImageApplied" object:nil];
-
-}
-
 
 %end
 
 
 %hook UIActivityContentViewController
-
-%property (nonatomic, strong) UIImageView *shareSheetImageView;
 
 %new
 
@@ -182,17 +151,14 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	loadShit();
 
 	if(!yes) return;
-
-	uiActivityVC = self;
+	if(shareSheetImageView) [shareSheetImageView removeFromSuperview];
 
 	shareSheetDarkImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"shareSheetDarkImage"];
 	shareSheetLightImage = [GcImagePickerUtils imageFromDefaults:kDefaults withKey:@"shareSheetLightImage"];
 
-	UIImage *image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
-
-	self.shareSheetImageView = createImageViewWithImage(image);
-	self.shareSheetImageView.frame = self.view.bounds;
-	[self.view insertSubview:self.shareSheetImageView atIndex:1];
+	shareSheetImageView = createImageViewWithImage(kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage);
+	shareSheetImageView.frame = self.view.bounds;
+	[self.view insertSubview:shareSheetImageView atIndex:1];
 
 }
 
@@ -200,67 +166,27 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 - (void)viewDidLoad { // create a notification observer
 
 	%orig;
-	[self setShareSheetImage];
 
-	[NSDistributedNotificationCenter.defaultCenter removeObserver:self];
+	[self setShareSheetImage];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setShareSheetImage) name:@"shareSheetImageApplied" object:nil];
 
 }
-
 
 %end
 
 
 %hook UIScreen
 
-
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
 
 	%orig;
-	phHandsetDialerView.dialerImageView.image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
-	csPasscodeVC.passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
-	uiActivityVC.shareSheetImageView.image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
+	dialerImageView.image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
+	passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
+	shareSheetImageView.image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
 
 }
 
-
-%end
 %end
 
 
-%ctor {
-
-	NSString *processName = [NSProcessInfo processInfo].processName;
-	BOOL isSpringboard = [@"SpringBoard" isEqualToString: processName];
-
-	BOOL shouldLoad = NO;
-	NSArray *args = [[NSClassFromString(@"NSProcessInfo") processInfo] arguments];
-	NSUInteger count = args.count;
-
-	if(count != 0) {
-
-		NSString *executablePath = args[0];
-
-		if(executablePath) {
-
-			NSString *processName = [executablePath lastPathComponent];
-			BOOL isApplication = [executablePath rangeOfString:@"/Application/"].location != NSNotFound || [executablePath rangeOfString:@"/Applications/"].location != NSNotFound;
-			BOOL isFileProvider = [[processName lowercaseString] rangeOfString:@"fileprovider"].location != NSNotFound;
-			BOOL skip = [processName isEqualToString:@"AdSheet"]
-						|| [processName isEqualToString:@"CoreAuthUI"]
-						|| [processName isEqualToString:@"InCallService"]
-						|| [processName isEqualToString:@"MessagesNotificationViewService"]
-						|| [executablePath rangeOfString:@".appex/"].location != NSNotFound;
-
-		if((!isFileProvider && isApplication && !skip) || isSpringboard) shouldLoad = YES;
-
-		}
-
-	}
-
-	if(!shouldLoad) return;
-
-	loadShit();
-	%init(Marie);
-
-}
+%ctor { loadShit(); }
