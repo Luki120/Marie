@@ -1,6 +1,6 @@
 Package: me.luki.marie
 Name: Marie
-Version: 1.0.4
+Version: 1.0.5
 Architecture: iphoneos-arm
 Description: Put an image for the dialer, passcode or sharesheet background on the fly
 Maintainer: Luki
