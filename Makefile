@@ -3,7 +3,7 @@ INSTALL_TARGET_PROCESSES = SpringBoard
 
 TWEAK_NAME = Marie
 
-Marie_FILES = Tweak.x
+Marie_FILES = Marie.x
 Marie_CFLAGS = -fobjc-arc
 Marie_LIBRARIES = gcuniversal
 
