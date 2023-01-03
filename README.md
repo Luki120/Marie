@@ -1,17 +1,14 @@
 # Marie
 
-![Marie](https://luki120.github.io/depictions/web/me.luki.marie/screenshots/MariePasscode.png)
+<img src="https://luki120.github.io/depictions/web/me.luki.marie/screenshots/MariePasscode.png" width="300">
 
 ## Features
 
-* Custom dark/light mode Dialer background image.
-* Custom dark/light mode Passcode background image.
-* Custom dark/light mode ShareSheet background image.
+* Custom dark/light mode dialer, passcode & sharesheet background image.
 
 ##  Socials
 
 * [Twitter](https://twitter.com/Lukii120)
-* [Support on Discord](https://discord.gg/2y5uWhhNJu)
 
 ## Contributing
 
