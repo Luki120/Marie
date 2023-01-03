@@ -70,7 +70,7 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	%orig;
 
 	[self setDialerImage];
-	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setDialerImage) name:@"dialerImageApplied" object:nil];	
+	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setDialerImage) name:MarieApplyDialerImageNotification object:nil];	
 
 }
 
@@ -114,7 +114,7 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	%orig;
 
 	[self setPasscodeImage];
-	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updatePasscodeImage) name:@"passcodeImageApplied" object:nil];
+	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updatePasscodeImage) name:MarieApplyPasscodeImageNotification object:nil];
 
 }
 
@@ -168,7 +168,7 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	%orig;
 
 	[self setShareSheetImage];
-	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setShareSheetImage) name:@"shareSheetImageApplied" object:nil];
+	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setShareSheetImage) name:MarieApplyShareSheetImageNotification object:nil];
 
 }
 

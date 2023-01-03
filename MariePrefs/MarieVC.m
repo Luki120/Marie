@@ -261,9 +261,9 @@ static NSString *const kImagesPath = @"/var/mobile/Library/Preferences/me.luki.m
 	[settings setObject:value forKey:specifier.properties[@"key"]];
 	[settings writeToFile:kPath atomically:YES];
 
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"dialerImageApplied" object:nil];
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"shareSheetImageApplied" object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:MarieApplyDialerImageNotification object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:MarieApplyPasscodeImageNotification object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:MarieApplyShareSheetImageNotification object:nil];
 
 	[super setPreferenceValue:value specifier:specifier];
 
@@ -286,9 +286,9 @@ static NSString *const kImagesPath = @"/var/mobile/Library/Preferences/me.luki.m
 
 static void postNSNotification() {
 
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"dialerImageApplied" object:nil];
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"passcodeImageApplied" object:nil];
-	[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"shareSheetImageApplied" object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:MarieApplyDialerImageNotification object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:MarieApplyPasscodeImageNotification object:nil];
+	[NSDistributedNotificationCenter.defaultCenter postNotificationName:MarieApplyShareSheetImageNotification object:nil];
 
 }
 
