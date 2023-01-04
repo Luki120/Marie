@@ -259,7 +259,7 @@ static const char *marie_sharesheet_image_changed = "me.luki.marieprefs/shareShe
 - (void)launchRespring {
 
 	pid_t pid;
-	const char* args[] = {"killall", "SpringBoard", NULL};
+	const char* args[] = {"killall", "backboardd", NULL};
 	posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
 
 }
@@ -323,6 +323,7 @@ static void marie_setTitle(PSTableCell *self, SEL _cmd, NSString *title) {
 	superCall(&superSetTitle, _cmd, title);
 
 	self.titleLabel.textColor = kMarieTintColor;
+	self.titleLabel.highlightedTextColor = kMarieTintColor;
 
 }
 
