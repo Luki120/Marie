@@ -99,7 +99,7 @@ static const char *marie_sharesheet_image_changed = "me.luki.marieprefs/shareShe
 
 	if(!versionLabel) {
 		versionLabel = [UILabel new];
-		versionLabel.text = @"Marie 1.0.5";
+		versionLabel.text = @"Marie 1.0.6";
 		versionLabel.font = [UIFont boldSystemFontOfSize: 12];
 		versionLabel.textAlignment = NSTextAlignmentCenter;
 		[navBarStackView addArrangedSubview: versionLabel];
@@ -195,13 +195,12 @@ static const char *marie_sharesheet_image_changed = "me.luki.marieprefs/shareShe
 	UIImage *checkmarkImage = [UIImage systemImageNamed:@"checkmark.circle.fill"];
 
 	if(changelogController) { [self presentViewController:changelogController animated:YES completion:nil]; return; }
-	changelogController = [[OBWelcomeController alloc] initWithTitle:@"Marie" detailText:@"1.0.5" icon: tweakIconImage];
+	changelogController = [[OBWelcomeController alloc] initWithTitle:@"Marie" detailText:@"1.0.6" icon: tweakIconImage];
 	changelogController.view.tintColor = kMarieTintColor;
 	changelogController.view.backgroundColor = UIColor.clearColor;
 	changelogController.modalInPresentation = NO;
 	changelogController.modalPresentationStyle = UIModalPresentationPageSheet;
-	[changelogController addBulletedListItemWithTitle:@"Code" description:@"Tweak & prefs code refactoring ⇝ everything works the same, but better." image: checkmarkImage];
-	[changelogController addBulletedListItemWithTitle:@"Tweak" description:@"Fixed animation glitch when leaving the passcode view without authenticating." image: checkmarkImage];
+	[changelogController addBulletedListItemWithTitle:@"Tweak" description:@"Only fade in the passcode image once the transition to the keypad view finishes & authenticating with FaceID wasn't possible." image: checkmarkImage];
 
 	_UIBackdropViewSettings *settings = [_UIBackdropViewSettings settingsForStyle:2];
 
