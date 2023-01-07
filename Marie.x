@@ -1,5 +1,8 @@
 #import "Headers/Marie.h"
+@import LocalAuthentication;
 
+
+@class SBUIPasscodeLockViewBase;
 
 #define kUserInterfaceStyle UIScreen.mainScreen.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark
 
@@ -15,6 +18,7 @@ static UIImageView *passcodeImageView;
 static UIImageView *shareSheetImageView;
 
 static NSString *const kDefaults = @"me.luki.marieprefs";
+static NSNotificationName const MarieFadeInPasscodeImageNotification = @"MarieFadeInPasscodeImageNotification";
 
 static BOOL yes;
 
@@ -38,6 +42,14 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
 	return imageView;
+
+}
+
+static void (*origVWA)(CSPasscodeViewController *, SEL, BOOL);
+static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated) {
+
+	origVWA(self, _cmd, animated);
+	[self fadeInPasscodeImage];
 
 }
 
@@ -102,6 +114,18 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 %new
 
+- (void)fadeInPasscodeImage {
+
+	[UIView animateWithDuration:0.8 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+
+		passcodeImageView.alpha = 1;
+
+	} completion:nil];
+
+}
+
+%new
+
 - (void)updatePasscodeImage {
 
 	passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
@@ -114,20 +138,8 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	%orig;
 
 	[self setPasscodeImage];
+	[NSNotificationCenter.defaultCenter addObserver:self selector:@selector(fadeInPasscodeImage) name:MarieFadeInPasscodeImageNotification object:nil];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(updatePasscodeImage) name:MarieApplyPasscodeImageNotification object:nil];
-
-}
-
-
-- (void)viewWillAppear:(BOOL)animated { // animate the image when the view appears
-
-	%orig;
-
-	[UIView transitionWithView:self.view duration:0.8 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-
-		passcodeImageView.alpha = 1;
-
-	} completion:nil];
 
 }
 
@@ -136,6 +148,18 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 
 	%orig;
 	passcodeImageView.alpha = 0;
+
+}
+
+%end
+
+
+%hook SBUIPasscodeLockViewBase
+
+- (void)updateForTransitionToPasscodeView:(BOOL)update animated:(BOOL)animated {
+
+	[NSNotificationCenter.defaultCenter postNotificationName:MarieFadeInPasscodeImageNotification object:nil];
+	%orig(update, animated);
 
 }
 
@@ -189,4 +213,13 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 %end
 
 
-%ctor { loadShit(); }
+%ctor {
+
+	loadShit();
+
+	LAContext *context = [LAContext new];
+	if([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil] &&
+		context.biometryType == LABiometryTypeFaceID) return;
+	MSHookMessageEx(NSClassFromString(@"CSPasscodeViewController"), @selector(viewWillAppear:), (IMP) &overrideVWA, (IMP *) &origVWA);
+
+}

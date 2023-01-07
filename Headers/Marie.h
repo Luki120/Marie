@@ -19,6 +19,7 @@
 @interface CSPasscodeViewController : UIViewController
 - (void)setPasscodeImage;
 - (void)updatePasscodeImage;
+- (void)fadeInPasscodeImage;
 @end
 
 
