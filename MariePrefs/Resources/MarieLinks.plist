@@ -28,7 +28,7 @@
 				<key>action</key>
 				<string>launchPayPal</string>
 				<key>label</key>
-				<string>Donate To Luki &#x1f970;</string>
+				<string>Support Development</string>
 			</dict>
 			<dict>
 				<key>cell</key>
@@ -38,7 +38,7 @@
 				<key>action</key>
 				<string>launchGitHub</string>
 				<key>label</key>
-				<string>Source Code &#x1f525;</string>
+				<string>Source Code 🔥</string>
 			</dict>
 			<dict>
 				<key>cell</key>
