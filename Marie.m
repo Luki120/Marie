@@ -1,4 +1,5 @@
 #import "Headers/Marie.h"
+@import CydiaSubstrate;
 @import LocalAuthentication;
 
 
@@ -30,7 +31,6 @@ static void loadShit() {
 
 }
 
-
 // Reusable
 
 static UIImageView *createImageViewWithImage(UIImage *image) {
@@ -40,25 +40,11 @@ static UIImageView *createImageViewWithImage(UIImage *image) {
 	imageView.contentMode = UIViewContentModeScaleAspectFill;
 	imageView.clipsToBounds = YES;
 	imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
 	return imageView;
 
 }
 
-static void (*origVWA)(CSPasscodeViewController *, SEL, BOOL);
-static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated) {
-
-	origVWA(self, _cmd, animated);
-	[self fadeInPasscodeImage];
-
-}
-
-
-%hook DialerController
-
-%new
-
-- (void)setDialerImage { // self explanatory
+static void new_setDialerImage(DialerController *self, SEL _cmd) {
 
 	loadShit();
 
@@ -76,24 +62,17 @@ static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated)
 
 }
 
+static void (*origDialerVDL)(DialerController *, SEL);
+static void overrideDialerVDL(DialerController *self, SEL _cmd) {
 
-- (void)viewDidLoad { // create a notification observer
-
-	%orig;
+	origDialerVDL(self, _cmd);
 
 	[self setDialerImage];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setDialerImage) name:MarieApplyDialerImageNotification object:nil];	
 
 }
 
-%end
-
-
-%hook CSPasscodeViewController
-
-%new
-
-- (void)setPasscodeImage { // self explanatory
+static void new_setPasscodeImage(CSPasscodeViewController *self, SEL _cmd) {
 
 	loadShit();
 
@@ -112,9 +91,7 @@ static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated)
 
 }
 
-%new
-
-- (void)fadeInPasscodeImage {
+static void new_fadeInPasscodeImage(CSPasscodeViewController *self, SEL _cmd) {
 
 	[UIView animateWithDuration:0.8 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
 
@@ -124,18 +101,32 @@ static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated)
 
 }
 
-%new
-
-- (void)updatePasscodeImage {
+static void new_updatePasscodeImage(CSPasscodeViewController *self, SEL _cmd) {
 
 	passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
 
 }
 
+static void (*origVWA)(CSPasscodeViewController *, SEL, BOOL);
+static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated) {
 
-- (void)viewDidLoad { // create a notification observer
+	origVWA(self, _cmd, animated);
+	[self fadeInPasscodeImage];
 
-	%orig;
+}
+
+static void (*origVWD)(CSPasscodeViewController *, SEL, BOOL);
+static void overrideVWD(CSPasscodeViewController *self, SEL _cmd, BOOL animated) {
+
+	origVWD(self, _cmd, animated);
+	passcodeImageView.alpha = 0;
+
+}
+
+static void (*origPasscodeVDL)(CSPasscodeViewController *, SEL);
+static void overridePasscodeVDL(CSPasscodeViewController *self, SEL _cmd) {
+
+	origPasscodeVDL(self, _cmd);
 
 	[self setPasscodeImage];
 	[NSNotificationCenter.defaultCenter addObserver:self selector:@selector(fadeInPasscodeImage) name:MarieFadeInPasscodeImageNotification object:nil];
@@ -143,34 +134,15 @@ static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated)
 
 }
 
-
-- (void)viewWillDisappear:(BOOL)animated {
-
-	%orig;
-	passcodeImageView.alpha = 0;
-
-}
-
-%end
-
-
-%hook SBUIPasscodeLockViewBase
-
-- (void)updateForTransitionToPasscodeView:(BOOL)update animated:(BOOL)animated {
+static void (*origUFTPV)(SBUIPasscodeLockViewBase *, SEL, BOOL, BOOL);
+static void overrideUFTPV(SBUIPasscodeLockViewBase *self, SEL _cmd, BOOL update, BOOL animated) {
 
 	[NSNotificationCenter.defaultCenter postNotificationName:MarieFadeInPasscodeImageNotification object:nil];
-	%orig(update, animated);
+	origUFTPV(self, _cmd, update, animated);
 
 }
 
-%end
-
-
-%hook UIActivityContentViewController
-
-%new
-
-- (void)setShareSheetImage { // self explanatory
+static void new_setShareSheetImage(UIActivityContentViewController *self, SEL _cmd) {
 
 	loadShit();
 
@@ -186,36 +158,43 @@ static void overrideVWA(CSPasscodeViewController *self, SEL _cmd, BOOL animated)
 
 }
 
+static void (*origShareSheetVDL)(UIActivityContentViewController *, SEL);
+static void overrideShareSheetVDL(UIActivityContentViewController *self, SEL _cmd) {
 
-- (void)viewDidLoad { // create a notification observer
-
-	%orig;
+	origShareSheetVDL(self, _cmd);
 
 	[self setShareSheetImage];
 	[NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(setShareSheetImage) name:MarieApplyShareSheetImageNotification object:nil];
 
 }
 
-%end
+static void (*origTCDC)(UIScreen *, SEL, UITraitCollection *);
+static void overrideTCDC(UIScreen *self, SEL _cmd, UITraitCollection *previousTrait) {
 
+	origTCDC(self, _cmd, previousTrait);
 
-%hook UIScreen
-
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-
-	%orig;
 	dialerImageView.image = kUserInterfaceStyle ? dialerDarkImage : dialerLightImage;
 	passcodeImageView.image = kUserInterfaceStyle ? passcodeDarkImage : passcodeLightImage;
 	shareSheetImageView.image = kUserInterfaceStyle ? shareSheetDarkImage : shareSheetLightImage;
 
 }
 
-%end
-
-
-%ctor {
+__attribute__((constructor)) static void init(void) {
 
 	loadShit();
+
+	MSHookMessageEx(NSClassFromString(@"DialerController"), @selector(viewDidLoad), (IMP) &overrideDialerVDL, (IMP *) &origDialerVDL);
+	MSHookMessageEx(NSClassFromString(@"CSPasscodeViewController"), @selector(viewWillDisappear:), (IMP) &overrideVWD, (IMP *) &origVWD);
+	MSHookMessageEx(NSClassFromString(@"CSPasscodeViewController"), @selector(viewDidLoad), (IMP) &overridePasscodeVDL, (IMP *) &origPasscodeVDL);
+	MSHookMessageEx(NSClassFromString(@"SBUIPasscodeLockViewBase"), @selector(updateForTransitionToPasscodeView:animated:), (IMP) &overrideUFTPV, (IMP *) &origUFTPV);
+	MSHookMessageEx(NSClassFromString(@"UIActivityContentViewController"), @selector(viewDidLoad), (IMP) &overrideShareSheetVDL, (IMP *) &origShareSheetVDL);
+	MSHookMessageEx(NSClassFromString(@"UIScreen"), @selector(traitCollectionDidChange:), (IMP) &overrideTCDC, (IMP *) &origTCDC);
+
+	class_addMethod(NSClassFromString(@"DialerController"), @selector(setDialerImage), (IMP) &new_setDialerImage, "v@:");
+	class_addMethod(NSClassFromString(@"CSPasscodeViewController"), @selector(setPasscodeImage), (IMP) &new_setPasscodeImage, "v@:");
+	class_addMethod(NSClassFromString(@"CSPasscodeViewController"), @selector(fadeInPasscodeImage), (IMP) &new_fadeInPasscodeImage, "v@:");
+	class_addMethod(NSClassFromString(@"CSPasscodeViewController"), @selector(updatePasscodeImage), (IMP) &new_updatePasscodeImage, "v@:");	
+	class_addMethod(NSClassFromString(@"UIActivityContentViewController"), @selector(setShareSheetImage), (IMP) &new_setShareSheetImage, "v@:");	
 
 	LAContext *context = [LAContext new];
 	if([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil] &&
