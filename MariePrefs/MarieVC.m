@@ -3,7 +3,7 @@
 
 // ! Constants
 
-static NSString *const kImagesPath = @"/var/mobile/Library/Preferences/me.luki.marieprefs/";
+static NSString *const kImagesPath = rootlessPathNS(@"/var/mobile/Library/Preferences/me.luki.marieprefs/");
 
 static const char *marie_dialer_image_changed = "me.luki.marieprefs/dialerImageChanged";
 static const char *marie_passcode_image_changed = "me.luki.marieprefs/passcodeImageChanged";
@@ -73,9 +73,11 @@ static const char *marie_sharesheet_image_changed = "me.luki.marieprefs/shareShe
 
 - (void)setupUI {
 
-	UIImage *iconImage = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/Marie@2x.png"];
-	UIImage *bannerImage = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/MarieBanner.png"];
+	UIImage *iconImage = [UIImage imageWithContentsOfFile:rootlessPathNS(@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/Marie@2x.png")];
+	UIImage *bannerImage = [UIImage imageWithContentsOfFile:rootlessPathNS(@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/MarieBanner.png")];
 	UIImage *changelogButtonImage = [UIImage systemImageNamed:@"atom"];
+
+	[UISwitch appearanceWhenContainedInInstancesOfClasses:@[[self class]]].onTintColor = kMarieTintColor;
 
 	self.navigationItem.titleView = [UIView new];
 
@@ -191,7 +193,7 @@ static const char *marie_sharesheet_image_changed = "me.luki.marieprefs/shareShe
 
 	AudioServicesPlaySystemSound(1521);
 
-	UIImage *tweakIconImage = [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/MarieIcon.png"];
+	UIImage *tweakIconImage = [UIImage imageWithContentsOfFile:rootlessPathNS(@"/Library/PreferenceBundles/MariePrefs.bundle/Assets/MarieIcon.png")];
 	UIImage *checkmarkImage = [UIImage systemImageNamed:@"checkmark.circle.fill"];
 
 	if(changelogController) { [self presentViewController:changelogController animated:YES completion:nil]; return; }
@@ -259,7 +261,7 @@ static const char *marie_sharesheet_image_changed = "me.luki.marieprefs/shareShe
 
 	pid_t pid;
 	const char* args[] = {"killall", "backboardd", NULL};
-	posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+	posix_spawn(&pid, rootlessPathC("/usr/bin/killall"), NULL, NULL, (char* const*)args, NULL);
 
 }
 

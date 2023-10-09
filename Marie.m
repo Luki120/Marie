@@ -179,9 +179,27 @@ static void overrideTCDC(UIScreen *self, SEL _cmd, UITraitCollection *previousTr
 
 }
 
+static id observer;
+static void appDidFinishLaunching() {
+
+	observer = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+
+		LAContext *context = [LAContext new];
+		if([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil] &&
+			context.biometryType == LABiometryTypeFaceID) return;
+
+		MSHookMessageEx(NSClassFromString(@"CSPasscodeViewController"), @selector(viewWillAppear:), (IMP) &overrideVWA, (IMP *) &origVWA);
+
+		[NSNotificationCenter.defaultCenter removeObserver: observer];
+
+	}];
+
+}
+
 __attribute__((constructor)) static void init(void) {
 
 	loadShit();
+	appDidFinishLaunching();
 
 	MSHookMessageEx(NSClassFromString(@"DialerController"), @selector(viewDidLoad), (IMP) &overrideDialerVDL, (IMP *) &origDialerVDL);
 	MSHookMessageEx(NSClassFromString(@"CSPasscodeViewController"), @selector(viewWillDisappear:), (IMP) &overrideVWD, (IMP *) &origVWD);
@@ -195,10 +213,5 @@ __attribute__((constructor)) static void init(void) {
 	class_addMethod(NSClassFromString(@"CSPasscodeViewController"), @selector(fadeInPasscodeImage), (IMP) &new_fadeInPasscodeImage, "v@:");
 	class_addMethod(NSClassFromString(@"CSPasscodeViewController"), @selector(updatePasscodeImage), (IMP) &new_updatePasscodeImage, "v@:");	
 	class_addMethod(NSClassFromString(@"UIActivityContentViewController"), @selector(setShareSheetImage), (IMP) &new_setShareSheetImage, "v@:");	
-
-	LAContext *context = [LAContext new];
-	if([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil] &&
-		context.biometryType == LABiometryTypeFaceID) return;
-	MSHookMessageEx(NSClassFromString(@"CSPasscodeViewController"), @selector(viewWillAppear:), (IMP) &overrideVWA, (IMP *) &origVWA);
 
 }
